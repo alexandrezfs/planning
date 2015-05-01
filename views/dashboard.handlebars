@@ -1,0 +1,68 @@
+<div class="row">
+
+    <div class="col-lg-6">
+
+        <h1>Planning</h1>
+
+        <div class="well">
+
+            <form action="planning/upload" enctype="multipart/form-data" method="POST">
+
+                <label for="file">Choisir un fichier</label>
+                <input type="file" id="file" name="file">
+                <input type="submit" class="btn btn-primary" value="Télécharger le planning" id="sendPlanning" style="margin-top: 10px;">
+
+                <p>En validant le planning, tous les employés seront alertés par mail.</p>
+
+            </form>
+
+        </div>
+
+        <div class="col-lg-12" style="margin-top:20px;">
+
+            <table class="table table-bordered">
+                {{#each plannings}}
+                    <tr>
+                        <td><i class="fa fa-file"></i> {{this.name}}</td>
+                        <td><a href="/planning/delete/{{this._id}}" onclick="return confirm('êtes-vous sûr de vouloir supprimer ce planning ?')">Supprimer</a></td>
+                    </tr>
+                {{/each}}
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <h1>Employés</h1>
+
+        <form action="employee/add" method="POST">
+
+            <label for="firstname">Prénom</label>
+            <input type="text" name="firstname" id="firstname" placeholder="Prénom" class="form-control">
+            <label for="lastname">Nom</label>
+            <input type="text" name="lastname" id="lastname" placeholder="Nom" class="form-control">
+            <label for="email">Adresse Email</label>
+            <input type="email" name="email" placeholder="Email" class="form-control">
+            <input type="submit" class="btn btn-primary" value="Ajouter un employé" style="margin-top: 10px;">
+
+        </form>
+
+        <div class="col-lg-12" style="margin-top:20px;">
+
+            <table class="table table-bordered">
+                {{#each employees}}
+                    <tr>
+                        <td><i class="fa fa-user"></i> {{this.firstname}} {{this.lastname}}</td>
+                        <td><i class="fa fa-envelope-o"></i> {{this.email}}</td>
+                        <td><a href="/employee/delete/{{this._id}}" onclick="return confirm('êtes-vous sûr de vouloir supprimer cet employé ?')">Supprimer</a></td>
+                    </tr>
+                {{/each}}
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
