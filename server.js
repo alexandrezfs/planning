@@ -6,7 +6,8 @@ var express = require('express'),
     routes = require('./routes'),
     bodyParser = require('body-parser'),
     config = require('./config'),
-    multer  = require('multer');
+    multer  = require('multer'),
+    cookieParser = require('cookie-parser');
 
 // Create an express instance and set a port variable
 var app = express();
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 app.use(session({secret: 'token'}));
 app.use(bodyParser());
+app.use(cookieParser())
 app.use(multer({ dest: __dirname + '/public/upload/'}));
 
 // Set handlebars as the templating engine

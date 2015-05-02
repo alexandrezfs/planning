@@ -8,7 +8,19 @@ moment.locale('fr');
 module.exports = {
 
     index: function (req, res) {
-        res.render('index');
+
+        if(req.cookies.email == config.values.super_admin_email) {
+            req.session.super_admin = true;
+            req.session.email = req.cookies.email;
+            res.redirect('/dashboard');
+        }
+        else if(req.cookies.email) {
+            req.session.email = req.cookies.email;
+            res.redirect('/dashboard/employee');
+        }
+        else {
+            res.render('index');
+        }
     },
     login: function (req, res) {
 
@@ -18,12 +30,14 @@ module.exports = {
         if (email == config.values.super_admin_email && password == config.values.super_admin_password) {
             req.session.super_admin = true;
             req.session.email = email;
+            res.cookie('email', email, { httpOnly: true });
             res.redirect('/dashboard');
         }
         else {
             model.ModelContainer.EmployeeModel.findOne({email: email, password: password}, function (err, employee) {
 
                 req.session.email = email;
+                res.cookie('email', email, { httpOnly: true });
 
                 if (employee) {
                     res.redirect('/dashboard/employee');
@@ -146,6 +160,9 @@ module.exports = {
 
         req.session.super_admin = null;
         req.session.email = null;
+
+        res.clearCookie('super_admin');
+        res.clearCookie('email');
 
         res.redirect('/');
     }
