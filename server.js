@@ -38,6 +38,8 @@ app.get('/employee/delete/:id', routes.deleteEmployee);
 app.post('/planning/upload', routes.uploadPlanning);
 app.get('/logout', routes.logout);
 app.get('/planning/download/:id', routes.downloadPlanning);
+app.get('/planning/delete/:id', routes.deletePlanning);
+app.get('/planning/404', routes.planningNotFound);
 
 
 // Fire it up (start our server)

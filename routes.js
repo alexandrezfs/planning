@@ -184,10 +184,22 @@ module.exports = {
                 res.render('download', {planning: planning, is_connected: is_connected});
             }
             else {
-                res.redirect('404');
+                res.redirect('/planning/404');
             }
 
         });
 
+    },
+
+    deletePlanning: function(req, res) {
+
+        model.ModelContainer.PlanningModel.remove({_id: req.params.id}).exec();
+
+        res.redirect('/dashboard');
+    },
+
+    planningNotFound: function(req, res) {
+
+        res.render('planning404');
     }
 };
