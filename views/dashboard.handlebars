@@ -9,7 +9,7 @@
             <form action="planning/upload" enctype="multipart/form-data" method="POST">
 
                 <label for="file">Choisir un fichier</label>
-                <input type="file" id="file" name="file">
+                <input type="file" id="file" name="file" required>
                 <input type="submit" class="btn btn-primary" value="Télécharger le planning" id="sendPlanning" style="margin-top: 10px;">
 
                 <p>En validant le planning, tous les employés seront alertés par mail.</p>
@@ -40,11 +40,11 @@
         <form action="employee/add" method="POST">
 
             <label for="firstname">Prénom</label>
-            <input type="text" name="firstname" id="firstname" placeholder="Prénom" class="form-control">
+            <input type="text" name="firstname" id="firstname" placeholder="Prénom" class="form-control" required>
             <label for="lastname">Nom</label>
             <input type="text" name="lastname" id="lastname" placeholder="Nom" class="form-control">
             <label for="email">Adresse Email</label>
-            <input type="email" name="email" placeholder="Email" class="form-control">
+            <input type="email" name="email" placeholder="Email" class="form-control" required>
             <input type="submit" class="btn btn-primary" value="Ajouter un employé" style="margin-top: 10px;">
 
         </form>

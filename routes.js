@@ -47,7 +47,8 @@ module.exports = {
 
                     res.render('dashboard', {
                         employees: employees,
-                        plannings: plannings
+                        plannings: plannings,
+                        is_connected: true
                     });
                 });
             });
@@ -134,7 +135,7 @@ module.exports = {
             model.ModelContainer.EmployeeModel.find({email: req.session.email}, function (err, employee) {
                 model.ModelContainer.PlanningModel.find().sort([['created_at', 'descending']]).exec(function (err, plannings) {
 
-                    res.render('dashboard_employee.handlebars', {employee: employee, plannings: plannings});
+                    res.render('dashboard_employee.handlebars', {employee: employee, plannings: plannings, is_connected: true});
 
                 });
             });
