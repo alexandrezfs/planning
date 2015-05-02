@@ -36,10 +36,11 @@ module.exports = {
         else {
             model.ModelContainer.EmployeeModel.findOne({email: email, password: password}, function (err, employee) {
 
-                req.session.email = email;
-                res.cookie('email', email, { httpOnly: true });
-
                 if (employee) {
+
+                    req.session.email = email;
+                    res.cookie('email', email, { httpOnly: true });
+
                     res.redirect('/dashboard/employee');
                 }
                 else {
@@ -117,12 +118,14 @@ module.exports = {
 
             res.redirect('/dashboard/planning/sent');
 
+            var downloadLink = domain + '/planning/download/' + planning._id;
+
             //send emails
             model.ModelContainer.EmployeeModel.find(function (err, employees) {
 
                 employees.forEach(function (employee) {
 
-                    var message = 'Bonjour ' + employee.firstname + '.<br><br>Votre planning est arrivé. <a href="' + uri + '">Cliquez ici pour le télécharger</a> ou <a href="' + domain + '">connectez-vous ici</a> pour accéder en ligne à votre planning. (pour rappel, votre mot de passe est: ' + employee.password + ')<br><br>Cordialement,<br><br>La DSI - Librairie La Bourse.';
+                    var message = 'Bonjour ' + employee.firstname + '.<br><br>Votre planning est arrivé. <a href="' + downloadLink + '">Cliquez ici pour le télécharger</a> ou <a href="' + domain + '">connectez-vous ici</a> pour accéder en ligne à votre planning. (pour rappel, votre mot de passe est: ' + employee.password + ')<br><br>Cordialement,<br><br>La DSI - Librairie La Bourse.<br><br><em>Ce message a été envoyé automatiquement.</em>';
 
                     email_interface.sendMail(message, message, 'Librairie La Bourse - Votre planning est arrivé', 'info@librairielabourse.com', 'La Bourse', employee.email, function (response) {
                         console.log(response);
@@ -146,7 +149,7 @@ module.exports = {
         }
         else {
 
-            model.ModelContainer.EmployeeModel.find({email: req.session.email}, function (err, employee) {
+            model.ModelContainer.EmployeeModel.findOne({email: req.session.email}, function (err, employee) {
                 model.ModelContainer.PlanningModel.find().sort([['created_at', 'descending']]).exec(function (err, plannings) {
 
                     res.render('dashboard_employee.handlebars', {employee: employee, plannings: plannings, is_connected: true});
@@ -165,5 +168,26 @@ module.exports = {
         res.clearCookie('email');
 
         res.redirect('/');
+    },
+
+    downloadPlanning: function(req, res) {
+
+        model.ModelContainer.PlanningModel.findOne({_id: req.params.id}, function(err, planning) {
+
+            var is_connected = false;
+
+            if(req.session.email || req.cookies.email) {
+                is_connected = true;
+            }
+
+            if(planning) {
+                res.render('download', {planning: planning, is_connected: is_connected});
+            }
+            else {
+                res.redirect('404');
+            }
+
+        });
+
     }
 };

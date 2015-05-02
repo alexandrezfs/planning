@@ -24,6 +24,7 @@
                 {{#each plannings}}
                     <tr>
                         <td><i class="fa fa-file"></i> {{this.name}}</td>
+                        <td><i class="fa fa-download"></i> <a href="/planning/download/{{this._id}}" target="_blank">Télécharger</a></td>
                         <td><a href="/planning/delete/{{this._id}}" onclick="return confirm('êtes-vous sûr de vouloir supprimer ce planning ?')">Supprimer</a></td>
                     </tr>
                 {{/each}}

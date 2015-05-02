@@ -37,6 +37,7 @@ app.post('/employee/add', routes.addEmployee);
 app.get('/employee/delete/:id', routes.deleteEmployee);
 app.post('/planning/upload', routes.uploadPlanning);
 app.get('/logout', routes.logout);
+app.get('/planning/download/:id', routes.downloadPlanning);
 
 
 // Fire it up (start our server)

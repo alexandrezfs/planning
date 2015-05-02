@@ -8,7 +8,7 @@
             {{#each plannings}}
                 <tr>
                     <td><i class="fa fa-file"></i> {{this.name}}</td>
-                    <td><a href="{{this.uri}}" target="_blank">Télécharger</a></td>
+                    <td><i class="fa fa-download"></i> <a href="/planning/download/{{this._id}}" target="_blank">Télécharger</a></td>
                 </tr>
             {{/each}}
         </table>
