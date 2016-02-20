@@ -2,6 +2,7 @@ var config = require('./config');
 var model = require('./model');
 var moment = require('moment');
 var email_interface = require('./email_interface');
+var fs = require('fs');
 
 moment.locale('fr');
 
@@ -9,12 +10,12 @@ module.exports = {
 
     index: function (req, res) {
 
-        if(req.cookies.email == config.values.super_admin_email) {
+        if (req.cookies.email == config.values.super_admin_email) {
             req.session.super_admin = true;
             req.session.email = req.cookies.email;
             res.redirect('/dashboard');
         }
-        else if(req.cookies.email) {
+        else if (req.cookies.email) {
             req.session.email = req.cookies.email;
             res.redirect('/dashboard/employee');
         }
@@ -30,7 +31,7 @@ module.exports = {
         if (email == config.values.super_admin_email && password == config.values.super_admin_password) {
             req.session.super_admin = true;
             req.session.email = email;
-            res.cookie('email', email, { httpOnly: true });
+            res.cookie('email', email, {httpOnly: true});
             res.redirect('/dashboard');
         }
         else {
@@ -39,7 +40,7 @@ module.exports = {
                 if (employee) {
 
                     req.session.email = email;
-                    res.cookie('email', email, { httpOnly: true });
+                    res.cookie('email', email, {httpOnly: true});
 
                     res.redirect('/dashboard/employee');
                 }
@@ -105,6 +106,8 @@ module.exports = {
         var host = req.get('host');
         var protocol = req.protocol;
         var filename = req.files.file.name;
+        var filepath = req.files.file.path;
+        var planningFileObject = fs.readFileSync(filepath);
         var domain = protocol + '://' + host;
         var uri = domain + '/upload/' + filename;
 
@@ -120,6 +123,12 @@ module.exports = {
 
             var downloadLink = domain + '/planning/download/' + planning._id;
 
+            var attachments = [{
+                "type": "application/pdf",
+                "name": "planning.pdf",
+                "content": new Buffer(planningFileObject).toString('base64')
+            }];
+
             //send emails
             model.ModelContainer.EmployeeModel.find(function (err, employees) {
 
@@ -127,7 +136,7 @@ module.exports = {
 
                     var message = 'Bonjour ' + employee.firstname + '.<br><br>Votre planning est arrivé. <a href="' + downloadLink + '">Cliquez ici pour le télécharger</a> ou <a href="' + domain + '">connectez-vous ici</a> pour accéder en ligne à votre planning. (pour rappel, votre mot de passe est: ' + employee.password + ')<br><br>Cordialement,<br><br>La DSI - Librairie La Bourse.<br><br><em>Ce message a été envoyé automatiquement.</em>';
 
-                    email_interface.sendMail(message, message, 'Librairie La Bourse - Votre planning est arrivé', 'info@librairielabourse.com', 'La Bourse', employee.email, function (response) {
+                    email_interface.sendMail(message, message, 'Librairie La Bourse - Votre planning est arrivé', 'info@librairielabourse.com', 'La Bourse', employee.email, attachments, function (response) {
                         console.log(response);
                     });
                 });
@@ -136,7 +145,7 @@ module.exports = {
         });
     },
 
-    planningSent: function(req, res) {
+    planningSent: function (req, res) {
 
         res.render('planningSent');
     },
@@ -152,14 +161,18 @@ module.exports = {
             model.ModelContainer.EmployeeModel.findOne({email: req.session.email}, function (err, employee) {
                 model.ModelContainer.PlanningModel.find().sort([['created_at', 'descending']]).exec(function (err, plannings) {
 
-                    res.render('dashboard_employee.handlebars', {employee: employee, plannings: plannings, is_connected: true});
+                    res.render('dashboard_employee.handlebars', {
+                        employee: employee,
+                        plannings: plannings,
+                        is_connected: true
+                    });
 
                 });
             });
         }
     },
 
-    logout: function(req, res) {
+    logout: function (req, res) {
 
         req.session.super_admin = null;
         req.session.email = null;
@@ -170,17 +183,17 @@ module.exports = {
         res.redirect('/');
     },
 
-    downloadPlanning: function(req, res) {
+    downloadPlanning: function (req, res) {
 
-        model.ModelContainer.PlanningModel.findOne({_id: req.params.id}, function(err, planning) {
+        model.ModelContainer.PlanningModel.findOne({_id: req.params.id}, function (err, planning) {
 
             var is_connected = false;
 
-            if(req.session.email || req.cookies.email) {
+            if (req.session.email || req.cookies.email) {
                 is_connected = true;
             }
 
-            if(planning) {
+            if (planning) {
                 res.render('download', {planning: planning, is_connected: is_connected});
             }
             else {
@@ -191,14 +204,14 @@ module.exports = {
 
     },
 
-    deletePlanning: function(req, res) {
+    deletePlanning: function (req, res) {
 
         model.ModelContainer.PlanningModel.remove({_id: req.params.id}).exec();
 
         res.redirect('/dashboard');
     },
 
-    planningNotFound: function(req, res) {
+    planningNotFound: function (req, res) {
 
         res.render('planning404');
     }

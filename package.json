@@ -13,7 +13,8 @@
     "mandrill-api": "^1.0.45",
     "moment": "^2.10.2",
     "mongoose": "^4.0.2",
-    "multer": "^0.1.8"
+    "multer": "^0.1.8",
+    "node-fs": "^0.1.7"
   },
   "devDependencies": {},
   "scripts": {
