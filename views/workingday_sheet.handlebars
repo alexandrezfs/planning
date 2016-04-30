@@ -1,0 +1,111 @@
+<div class="row">
+
+    <div class="col-lg-12">
+
+        <h1>Saisir une feuille de présence pour le mois de {{ currentSheet.month }}</h1>
+
+        <div class="well">
+
+            <h2>Ajouter une journée travaillée</h2>
+
+            <form action="/workingday/add" method="POST">
+
+                <label for="day">Jour du mois</label>
+                <input type="date" name="day" id="day" placeholder="Jour du mois" required>
+
+                <br>
+
+                <label for="startingHourMorning">Matin : Heure de début</label>
+                <input type="time" name="startingHourMorning" id="startingHourMorning"
+                       placeholder="Matin : Heure de début" required>
+
+                <br>
+
+                <label for="endingHourMorning">Après-midi : Heure de début</label>
+                <input type="time" name="endingHourMorning" id="endingHourMorning" placeholder="Matin : Heure de fin"
+                       required>
+
+                <br>
+
+                <label for="startingHourAfternoon">Après-midi : Heure de début</label>
+                <input type="time" name="startingHourAfternoon" id="startingHourAfternoon"
+                       placeholder="Après-midi : Heure de début" required>
+
+                <br>
+
+                <label for="endingHourAfternoon">Après-midi : Heure de fin</label>
+                <input type="time" name="endingHourAfternoon" id="endingHourAfternoon"
+                       placeholder="Après-midi : Heure de fin" required>
+
+                <br>
+
+                <input type="hidden" name="workingsheet_id" value="{{ currentSheet._id }}">
+
+                <input type="submit" class="btn btn-primary" value="Ajouter la journée"
+                       style="margin-top: 10px;">
+
+            </form>
+
+        </div>
+
+        <div class="col-lg-12" style="margin-top:20px;">
+
+            <div>
+                <p><strong>Nom - Prénom :</strong> {{user.lastname}} {{user.firstname}}</p>
+                <p><strong>Mois :</strong> {{currentSheet.month}}</p>
+            </div>
+
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Matin</td>
+                    <td>Après-midi</td>
+                    <td>Total jour</td>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {{#each currentSheet.workingDays}}
+                    <tr>
+                        <td>{{this.date}}</td>
+                        <td>{{this.startingHourMorning}}H - {{this.endingHourMorning}}H</td>
+                        <td>{{this.startingHourAfternoon}}H - {{this.endingHourAfternoon}}H</td>
+                        <td>{{this.totalWorkingHour}}</td>
+                    </tr>
+                {{/each}}
+
+                </tbody>
+            </table>
+
+            <p>Signature numérique :</p>
+            <div class="signature_pad" id="signature_pad">
+                <canvas></canvas>
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Valider la journée"
+                   style="margin-top: 10px;">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        var wrapper = document.getElementById("signature_pad");
+
+        var canvas = wrapper.querySelector("canvas");
+
+        var signaturePad = new SignaturePad(canvas);
+    });
+
+
+    // Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible paramters)
+    //signaturePad.toDataURL(); // save image as PNG
+
+</script>

@@ -9,6 +9,18 @@ var express = require('express'),
     multer  = require('multer'),
     cookieParser = require('cookie-parser');
 
+
+
+var hbs = exphbs.create({
+    defaultLayout: 'main',
+    helpers: {
+        foo: function () { return 'FOO!'; },
+        bar: function () { return 'BAR!'; }
+    }
+});
+
+
+
 // Create an express instance and set a port variable
 var app = express();
 var port = config.values.port;
@@ -19,13 +31,13 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 app.use(session({secret: 'token'}));
 app.use(bodyParser());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(multer({ dest: __dirname + '/public/upload/'}));
 
 // Set handlebars as the templating engine
 app.use("/", express.static(__dirname + "/public/"));
 app.set('views', __dirname + '/views');
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.get('/', routes.index);
@@ -40,6 +52,9 @@ app.get('/logout', routes.logout);
 app.get('/planning/download/:id', routes.downloadPlanning);
 app.get('/planning/delete/:id', routes.deletePlanning);
 app.get('/planning/404', routes.planningNotFound);
+app.get('/workingday/sheet/:id', routes.workingDaySheet);
+app.post('/workingday/sheet/add', routes.addWorkingDaySheet);
+app.post('/workingday/add', routes.addWorkingDay);
 
 
 // Fire it up (start our server)

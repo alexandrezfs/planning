@@ -214,5 +214,110 @@ module.exports = {
     planningNotFound: function (req, res) {
 
         res.render('planning404');
+    },
+
+    workingDaySheet: function (req, res) {
+
+        if (req.session.email) {
+
+            model.ModelContainer.EmployeeModel.findOne({email: req.session.email})
+                .exec(function (err, employee) {
+
+                    model.ModelContainer.WorkingDaySheetModel.findOne({
+                            _id: req.params.id,
+                            employee: employee._id
+                        })
+                        .populate('workingDays')
+                        .exec(function (err, workingDaySheet) {
+
+                            console.log(workingDaySheet.workingDays);
+
+                            if (!workingDaySheet) {
+                                res.redirect('/dashboard');
+                            }
+                            else {
+                                res.render('workingday_sheet', {
+                                    currentSheet: workingDaySheet,
+                                    user: employee
+                                });
+                            }
+
+                        });
+
+                });
+        }
+        else {
+            res.redirect('/');
+        }
+
+    },
+
+    addWorkingDaySheet: function (req, res) {
+
+        var month = moment(req.body.month, 'YYYY-MM').toDate();
+
+        model.ModelContainer.EmployeeModel.findOne({email: req.session.email}, function (err, employee) {
+
+            model.ModelContainer.WorkingDaySheetModel.findOne({
+                month: month,
+                employee: employee._id
+            }, function (err, workingDaySheet) {
+
+                if (!workingDaySheet) {
+
+                    var workingDaySheet = model.ModelContainer.WorkingDaySheetModel({
+                        month: month,
+                        employee: employee._id
+                    });
+
+                    workingDaySheet.save(function (err, workingDaySheet) {
+                        res.redirect('/workingday/sheet/' + workingDaySheet._id);
+                    });
+                }
+                else {
+                    res.redirect('/workingday/sheet/' + workingDaySheet._id);
+                }
+
+            });
+        });
+
+    },
+
+    addWorkingDay: function (req, res) {
+
+        var startingHourMorning = moment(req.body.startingHourMorning, "hh:mm").toDate(),
+            endingHourMorning = moment(req.body.endingHourMorning, "hh:mm").toDate(),
+            startingHourAfternoon = moment(req.body.startingHourAfternoon, "hh:mm").toDate(),
+            endingHourAfternoon = moment(req.body.endingHourAfternoon, "hh:mm").toDate();
+
+        var totalWorkingHourMorning = moment.duration(moment(endingHourMorning).diff(startingHourMorning)).asHours();
+        var totalWorkingHourAfternoon = moment.duration(moment(endingHourAfternoon).diff(startingHourAfternoon)).asHours();
+
+        var totalWorkingHour = totalWorkingHourMorning + totalWorkingHourAfternoon;
+
+        var workingDay = model.ModelContainer.WorkingDayModel({
+            date: moment(req.body.day, "YYYY-MM-DD").toDate(),
+            startingHourMorning: startingHourMorning,
+            endingHourMorning: endingHourMorning,
+            startingHourAfternoon: startingHourAfternoon,
+            endingHourAfternoon: endingHourAfternoon,
+            workingDaySheet: req.body.workingsheet_id,
+            totalWorkingHourMorning: totalWorkingHourMorning,
+            totalWorkingHourAfternoon: totalWorkingHourAfternoon,
+            totalWorkingHour: totalWorkingHour
+        });
+
+        workingDay.save(function (err, workingDay) {
+
+            model.ModelContainer.WorkingDaySheetModel.findOne({_id: workingDay.workingDaySheet}, function(err, workingDaySheet) {
+
+                workingDaySheet.workingDays.push(workingDay._id);
+                workingDaySheet.save(function() {
+                    res.redirect('/workingday/sheet/' + req.body.workingsheet_id);
+                });
+
+            });
+
+        });
     }
 };

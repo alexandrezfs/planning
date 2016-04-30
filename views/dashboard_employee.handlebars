@@ -2,6 +2,20 @@
 
     <div class="col-lg-12">
 
+        <h1>Vos feuilles d'heures</h1>
+
+        <div>
+            <form action="/workingday/sheet/add" method="POST">
+
+                <label for="month">Séléctionnez un mois :</label>
+                <input type="month" name="month" id="month">
+                <br>
+                <input type="submit" class="btn btn-primary" value="Accéder"
+                       style="margin-top: 10px;">
+
+            </form>
+        </div>
+
         <h1>Vos plannings</h1>
 
         <table class="table table-bordered">
