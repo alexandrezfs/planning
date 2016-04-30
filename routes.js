@@ -126,7 +126,7 @@ module.exports = {
             var attachments = [{
                 "type": "application/pdf",
                 "name": "planning.pdf",
-                "content": new Buffer(planningFileObject).toString('base64')
+                "data": new Buffer(planningFileObject).toString('base64')
             }];
 
             //send emails

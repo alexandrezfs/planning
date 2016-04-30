@@ -5,32 +5,33 @@ var config = require('./config');
  * @type {exports}
  */
 var mandrill = require('mandrill-api/mandrill');
-var mandrill_client = new mandrill.Mandrill(config.values.mandrill_api_key);
+var SparkPost = require('sparkpost');
 
 exports.sendMail = function (htmlContent, textContent, subject, from_email, from_name, to_email, attachments, callback) {
 
-    var message = {
-        "html": htmlContent,
-        "text": textContent,
-        "subject": subject,
-        "from_email": from_email,
-        "from_name": from_name,
-        "attachments": attachments,
-        "to": [{
-            "email": to_email
-        }]
-    };
+    var sp = new SparkPost(config.values.sparkpost_api_key);
 
-    var async = false;
-
-    mandrill_client.messages.send({"message": message, "async": async}, function (result) {
-
-        console.log(result);
-
-        callback(result);
-
-    }, function (e) {
-        console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+    sp.transmissions.send({
+        transmissionBody: {
+            content: {
+                from: from_email,
+                subject: subject,
+                html: htmlContent,
+                text: textContent,
+                attachments: attachments
+            },
+            recipients: [
+                {address: to_email}
+            ]
+        }
+    }, function(err, res) {
+        if (err) {
+            console.log('Sparkpost : Whoops! Something went wrong');
+            console.log(err);
+        } else {
+            console.log('Sparkpost : Woohoo! You just sent your mail!');
+            callback(res);
+        }
     });
 
 };
