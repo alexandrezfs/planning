@@ -7,6 +7,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     config = require('./config'),
     multer  = require('multer'),
+    path  = require('path'),
     cookieParser = require('cookie-parser');
 
 // Create an express instance and set a port variable
