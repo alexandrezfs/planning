@@ -24,7 +24,7 @@ app.use(multer({ dest: __dirname + '/public/upload/'}));
 
 // Set handlebars as the templating engine
 app.use("/", express.static(__dirname + "/public/"));
-app.set('views', __dirname + '/views');
+app.set('views', path.resolve(__dirname + '/views'));
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
