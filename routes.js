@@ -103,13 +103,10 @@ module.exports = {
 
         console.log(req.files);
 
-        var host = req.get('host');
-        var protocol = req.protocol;
         var filename = req.files.file.name;
         var filepath = req.files.file.path;
         var planningFileObject = fs.readFileSync(filepath);
-        var domain = protocol + '://' + host;
-        var uri = domain + '/upload/' + filename;
+        var uri = config.values.main_url + '/upload/' + filename;
 
         var planning = new model.ModelContainer.PlanningModel({
             name: 'Planning téléchargé le ' + moment().format('LLL'),
@@ -121,7 +118,7 @@ module.exports = {
 
             res.redirect('/dashboard/planning/sent');
 
-            var downloadLink = domain + '/planning/download/' + planning._id;
+            var downloadLink = config.values.main_url + '/planning/download/' + planning._id;
 
             var attachments = [{
                 "type": "application/pdf",
@@ -134,7 +131,7 @@ module.exports = {
 
                 employees.forEach(function (employee) {
 
-                    var message = 'Bonjour ' + employee.firstname + '.<br><br>Votre planning est arrivé. <a href="' + downloadLink + '">Cliquez ici pour le télécharger</a> ou <a href="' + domain + '">connectez-vous ici</a> pour accéder en ligne à votre planning. (pour rappel, votre mot de passe est: ' + employee.password + ')<br><br>Cordialement,<br><br>La DSI - Librairie La Bourse.<br><br><em>Ce message a été envoyé automatiquement.</em>';
+                    var message = 'Bonjour ' + employee.firstname + '.<br><br>Votre planning est arrivé. <a href="' + downloadLink + '">Cliquez ici pour le télécharger</a> ou <a href="' + config.values.main_url + '">connectez-vous ici</a> pour accéder en ligne à votre planning. (pour rappel, votre mot de passe est: ' + employee.password + ')<br><br>Cordialement,<br><br>La DSI - Librairie La Bourse.<br><br><em>Ce message a été envoyé automatiquement.</em>';
 
                     email_interface.sendMail(message, message, 'Librairie La Bourse - Votre planning est arrivé', 'info@librairielabourse.com', 'La Bourse', employee.email, attachments, function (response) {
                         console.log(response);

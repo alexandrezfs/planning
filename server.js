@@ -6,6 +6,7 @@ var express = require('express'),
     routes = require('./routes'),
     bodyParser = require('body-parser'),
     config = require('./config'),
+    cron = require('./cron'),
     multer  = require('multer'),
     path  = require('path'),
     cookieParser = require('cookie-parser');
@@ -42,8 +43,9 @@ app.get('/planning/download/:id', routes.downloadPlanning);
 app.get('/planning/delete/:id', routes.deletePlanning);
 app.get('/planning/404', routes.planningNotFound);
 
+cron.startJobs();
 
 // Fire it up (start our server)
-var server = http.createServer(app).listen(port, function () {
+http.createServer(app).listen(port, function () {
     console.log('Express server listening on port ' + port);
 });
