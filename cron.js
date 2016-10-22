@@ -14,7 +14,7 @@ exports.startJobs = function () {
 
             var attachments = [{
                 "type": "application/pdf",
-                "name": "planning.pdf",
+                "name": "grille-heures.pdf",
                 "data": new Buffer(fileObject).toString('base64')
             }];
 
